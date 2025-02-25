@@ -5,7 +5,7 @@ app = Flask(__name__)
 app.secret_key = "segredo_super_secreto"  # Necessário para usar session
 
 # URL do webhook no n8n
-WEBHOOK_URL = "https://n8n.gustavotadeu.com.br/webhook-test/analise_maturidade"
+WEBHOOK_URL = "https://n8n.gustavotadeu.com.br/webhook/analise_maturidade"
 
 # Lista de perguntas do assessment
 QUESTOES_ASSESSMENT = [
