@@ -1,5 +1,5 @@
 # Usa a imagem oficial do Python
-FROM python:3.9
+FROM python:3.13.2-slim
 
 # Define o diretório de trabalho dentro do container
 WORKDIR /app
@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . /app
 
 # Instala as dependências do projeto
-RUN pip install --no-cache-dir flask gunicorn
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Expõe a porta que o Flask usará
 EXPOSE 5000
