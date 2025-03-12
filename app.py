@@ -1,8 +1,14 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 import requests
+import supabase
 
 app = Flask(__name__)
 app.secret_key = "segredo_super_secreto"  # Necessário para usar session
+
+# Configuração do Supabase
+SUPABASE_URL = "https://aonlgzucweiamkvhopnk.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFvbmxnenVjd2VpYW1rdmhvcG5rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk1NTQ1NjAsImV4cCI6MjA1NTEzMDU2MH0.7ZMUNKvLeE6fMTDDMG71SCwCPqikkbyAlVDZB-qJTYs"
+supa = supabase.create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # URL do webhook no n8n
 WEBHOOK_URL = "https://n8n.gustavotadeu.com.br/webhook/analise_maturidade"
@@ -106,5 +112,20 @@ def assessment():
 
     return render_template("assessment.html", questoes=QUESTOES_ASSESSMENT)
 
+@app.route('/consulta', methods=['GET', 'POST'])
+def index():
+    resultados = None
+    erro = None
+
+    if request.method == 'POST':
+        email_busca = request.form.get('email_busca')
+
+        try:
+            response = supa.rpc("custom_query", {"email_param": email_busca}).execute()
+            resultados = response.data
+        except Exception as e:
+            erro = f"Erro ao buscar dados: {str(e)}"
+
+    return render_template('consulta.html', resultados=resultados, erro=erro)
 if __name__ == "__main__":
     app.run(debug=True)

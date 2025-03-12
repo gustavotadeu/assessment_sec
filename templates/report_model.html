@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Avaliação de Segurança</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px #ccc;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #2c3e50;
+            color: white;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>RESULTADO DA AVALIAÇÃO DE SEGURANÇA CIBERNÉTICA</h1>
+        <p><strong>Cliente:</strong>{{ $json.company }}</p>
+        <p><strong>Data:</strong> {{ new Date().toLocaleDateString('pt-BR') }}</p>
+        <p>Olá equipe {{ $json.company }}! Como você está?</p>
+        <p>É um prazer apresentar neste relatório os resultados da Avaliação de Cibersegurança realizada.</p>
+
+        <h2>Resultado da Avaliação</h2>
+        <p><strong>Pontuação Global:</strong> {{ $json.score_maturidade }}/4,0</p>
+
+        <h3>Status Atual por Domínio</h3>
+        <table>
+            <tr>
+                <th>Domínio</th>
+                <th>Qualificação</th>
+                <th>% Pontuação</th>
+                <th>Nível de risco</th>
+            </tr>
+            <tr>
+                <td>Governança e conformidade</td>
+                <td>{{ $json.soma__governanca_conformidade }}</td>
+                <td>{{ $json.porcentagem_governanca_conformidade }}</td>
+                <td>{{ $json.nivel_de_risco.governanca_conformidade }}</td>
+            </tr>
+            <tr>
+                <td>Gestão de Riscos</td>
+                <td>{{ $json['soma_gestão_de_risco'] }}</td>
+                <td>{{ $json['porcentagem_gestão_de_risco'] }}</td>
+                <td>{{ $json.nivel_de_risco.gestao_de_risco }}</td>
+            </tr>
+            <tr>
+                <td>Proteção de dados</td>
+                <td>{{ $json['soma_proteção_de_dados'] }}</td>
+                <td>{{ $json['porcentagem_proteção_de_dados'] }}</td>
+                <td>{{ $json.nivel_de_risco.protecao_de_dados }}</td>
+            </tr>
+            <tr>
+                <td>Segurança de Redes e Sistemas</td>
+                <td>{{ $json['soma_segurança_de_rede_e_sistemas'] }}</td>
+                <td>{{ $json['porcentagem_segurança_de_rede_e_sistemas'] }}</td>
+                <td>{{ $json.nivel_de_risco.seguranca_de_rede_e_sistemas }}</td>
+            </tr>
+            <tr>
+                <td>Resposta a Incidentes</td>
+                <td>{{ $json.soma_resposta_a_incidentes }}</td>
+                <td>{{ $json.porcentagem_resposta_a_incidentes }}</td>
+                <td>{{ $json.nivel_de_risco.resposta_a_incidentes }}</td>
+            </tr>
+            <tr>
+                <td>Treinamento e Conscientização</td>
+                <td>15</td>
+                <td>63%</td>
+                <td>{{ $json.nivel_de_risco.treinamento_e_conscientizacao }}</td>
+            </tr>
+            <tr>
+                <td>Controle de Acesso</td>
+                <td>{{ $json.soma_controle_de_acesso }}</td>
+                <td>{{ $json.porcentagem_controle_de_acesso }}</td>
+                <td>{{ $json.nivel_de_risco.controle_de_acesso }}</td>
+            </tr>
+            <tr>
+                <td>Ferramentas de Gerenciamento e Segurança de Infraestrutura</td>
+                <td>{{ $json['soma_ferramentas_de_gerenciamento_e_segurança_de_infraestrutura'] }}</td>
+                <td>{{ $json['porcentagem_ferramentas_de_gerenciamento_e_segurança_de_infraestrutura'] }}</td>
+                <td>{{ $json.nivel_de_risco.ferramentas_de_gerenciamento_e_seguranca_de_infraestrutura }}</td>
+            </tr>
+        </table>
+{{ $json.html }}
+
+        <div class="footer">
+            <p>CONVERSYS - CONFIDENCIAL</p>
+            <p>© Direitos autorais 2016-2025. Todos os direitos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>
