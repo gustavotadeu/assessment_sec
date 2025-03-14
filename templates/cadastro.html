@@ -65,7 +65,9 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Email</label>
-                <input type="email" name="email" class="form-control" required>
+                <input type="email" name="email" class="form-control" required
+       oninvalid="this.setCustomValidity('⚠️ Digite um e-mail corporativo válido. Exemplo: usuario@empresa.com')"
+       oninput="this.setCustomValidity('')">
             </div>
             <div class="mb-3">
                 <label class="form-label">Cargo</label>
@@ -83,5 +85,54 @@
         </form>
     </div>
     </div>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} mt-3" role="alert">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const emailInput = document.querySelector("input[name='email']");
+
+    emailInput.addEventListener("input", function () {
+      emailInput.setCustomValidity(""); // Limpa mensagens anteriores
+    });
+
+    document.querySelector("form").addEventListener("submit", function (event) {
+      const email = emailInput.value.trim();
+
+      // Lista de domínios públicos bloqueados
+      const dominiosBloqueados = [
+        "gmail.com", "yahoo.com", "outlook.com", "hotmail.com",
+        "icloud.com", "aol.com", "zoho.com", "protonmail.com",
+        "gmx.com", "mail.com"
+      ];
+
+      if (!email.includes("@")) {
+        emailInput.setCustomValidity("⚠️ Insira um endereço de e-mail válido.");
+      } else {
+        const dominio = email.split("@")[1];
+
+        if (dominiosBloqueados.includes(dominio)) {
+          emailInput.setCustomValidity("⚠️ E-mails públicos não são aceitos! Utilize um e-mail corporativo.");
+        } else {
+          emailInput.setCustomValidity(""); // Remove erro se for válido
+        }
+      }
+
+      if (!emailInput.checkValidity()) {
+        event.preventDefault(); // Impede o envio do formulário
+        emailInput.reportValidity(); // Exibe a mensagem de erro do navegador
+      }
+    });
+  });
+</script>
+
+
 </body>
 </html>

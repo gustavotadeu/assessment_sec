@@ -1,14 +1,22 @@
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, flash
 import requests
-#import supabase
+import supabase
 
 app = Flask(__name__)
 app.secret_key = "segredo_super_secreto"  # Necessário para usar session
 
 # Configuração do Supabase
-#SUPABASE_URL = "https://aonlgzucweiamkvhopnk.supabase.co"
-#SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFvbmxnenVjd2VpYW1rdmhvcG5rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk1NTQ1NjAsImV4cCI6MjA1NTEzMDU2MH0.7ZMUNKvLeE6fMTDDMG71SCwCPqikkbyAlVDZB-qJTYs"
-#supa = supabase.create_client(SUPABASE_URL, SUPABASE_KEY)
+SUPABASE_URL = "https://aonlgzucweiamkvhopnk.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFvbmxnenVjd2VpYW1rdmhvcG5rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk1NTQ1NjAsImV4cCI6MjA1NTEzMDU2MH0.7ZMUNKvLeE6fMTDDMG71SCwCPqikkbyAlVDZB-qJTYs"
+supa = supabase.create_client(SUPABASE_URL, SUPABASE_KEY)
+
+
+# Lista de domínios públicos a serem bloqueados
+DOMINIOS_BLOQUEADOS = {
+    "gmail.com", "yahoo.com", "outlook.com", "hotmail.com",
+    "icloud.com", "aol.com", "zoho.com", "protonmail.com",
+    "gmx.com", "mail.com"
+}
 
 # URL do webhook no n8n
 WEBHOOK_URL = "https://n8n.gustavotadeu.com.br/webhook/analise_maturidade"
@@ -66,17 +74,34 @@ QUESTOES_ASSESSMENT = [
     "As ferramentas de automação de segurança (SOARs) foram implementadas?",
 ]
 
+DOMINIOS_BLOQUEADOS = {
+    "gmail.com", "yahoo.com", "outlook.com", "hotmail.com",
+    "icloud.com", "aol.com", "zoho.com", "protonmail.com",
+    "gmx.com", "mail.com"
+}
+
+
 @app.route("/", methods=["GET", "POST"])
 def cadastro():
     if request.method == "POST":
+        email = request.form.get("email", "").strip()
+
+        if email:
+            dominio = email.split("@")[-1].lower()
+            if dominio in DOMINIOS_BLOQUEADOS:
+                flash(
+                    "⚠️ E-mails públicos não são aceitos! Utilize um e-mail corporativo (exemplo: usuario@empresa.com).",
+                    "danger")
+                return render_template("cadastro.html")
+
         # Salvando os dados do formulário na sessão
         session["cadastro"] = {
-            "nome": request.form["nome"],
-            "telefone": request.form["telefone"],
-            "email": request.form["email"],
-            "cargo": request.form["cargo"],
-            "empresa": request.form["empresa"],
-            "quantidade_funcionarios": request.form["quantidade_funcionarios"],
+            "nome": request.form.get("nome", "").strip(),
+            "telefone": request.form.get("telefone", "").strip(),
+            "email": email,
+            "cargo": request.form.get("cargo", "").strip(),
+            "empresa": request.form.get("empresa", "").strip(),
+            "quantidade_funcionarios": request.form.get("quantidade_funcionarios", "").strip(),
         }
         return redirect(url_for("assessment"))
 
@@ -111,7 +136,7 @@ def assessment():
             return f"❌ Falha na conexão com o webhook: {e}", 500
 
     return render_template("assessment.html", questoes=QUESTOES_ASSESSMENT)
-'''
+
 @app.route('/consulta', methods=['GET', 'POST'])
 def index():
     resultados = None
@@ -128,6 +153,6 @@ def index():
 
     return render_template('consulta.html', resultados=resultados, erro=erro)
     
-    '''
+
 if __name__ == "__main__":
     app.run(debug=True)
